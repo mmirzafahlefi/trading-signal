@@ -17,8 +17,14 @@ interface SignalResponse {
   tp: string;
 }
 
+interface SignalResult {
+  signal: "buy" | "sell" | "hold";
+  sl: string;
+  tp: string;
+}
+
 // Fungsi untuk menghitung sinyal
-const calculateSignal = (priceData: Candle[]): SignalResponse["signal"] & { sl: string; tp: string } => {
+const calculateSignal = (priceData: Candle[]): SignalResult => {
   const closePrices = priceData.map((candle) => parseFloat(candle.close));
   const currentPrice = closePrices[closePrices.length - 1];
   const averagePrice = closePrices.reduce((a, b) => a + b, 0) / closePrices.length;
@@ -34,6 +40,9 @@ const calculateSignal = (priceData: Candle[]): SignalResponse["signal"] & { sl: 
     signal = "sell";
     sl = (currentPrice * 1.02).toFixed(2); // Stop Loss 2% di atas
     tp = (currentPrice * 0.98).toFixed(2); // Take Profit 2% di bawah
+  } else {
+    sl = "0";
+    tp = "0";
   }
 
   return { signal, sl, tp };
